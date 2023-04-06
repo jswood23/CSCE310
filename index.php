@@ -3,6 +3,6 @@
   <title>CSCE 310 Book Club</title>
  </head>
  <body>
-  <?php echo '<p>Hello World</p>'; ?>
+  <a href="/users/register.php">Register</a>
  </body>
 </html>
