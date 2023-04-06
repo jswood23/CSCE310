@@ -10,5 +10,5 @@
     </style>
 </head>
 <body>
-    <h1><a href="/" style="none">CSCE 310 Group 20 Book Club</a></h1>
+    <h1><a class="my-5" href="/" style="none">CSCE 310 Group 20 Book Club</a></h1>
 </body>
