@@ -1,0 +1,28 @@
+These are the SQL Queries that were run to create the tables in the database:
+
+Account table:
+
+CREATE TABLE accounts (
+    account_key INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    name_first VARCHAR(50) NOT NULL UNIQUE,
+    name_last VARCHAR(50) NOT NULL UNIQUE,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    permission INT DEFAULT 0,
+    bio VARCHAR(400),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+Bridge table:
+
+
+
+Meeting table:
+
+
+
+Review table:
+
+
+
+Item table:
