@@ -1,6 +1,6 @@
 These are the SQL Queries that were run to create the tables in the database:
 
-Account table:
+Account table (Josh):
 
 CREATE TABLE accounts (
     account_key INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -13,16 +13,16 @@ CREATE TABLE accounts (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
-Bridge table:
+Bridge table (Mark):
 
 
 
-Meeting table:
+Meeting table (Mark):
 
 
 
-Review table:
+Review table (Sam):
 
 
 
-Item table:
+Item table (Owen):
