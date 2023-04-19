@@ -25,15 +25,7 @@ $curUserEmail = $_SESSION["username"];
 <html>
 <body>
 <?php
-// Get all of the elements from the bridge table using the logged in user's Account_Key. Then use this to get all of the relevant meeting keys, and use them in the Meeting Table.
 
-/* // whenever accounts table is implemented
-$sql = "SELECT m.*
-        FROM meeting m
-        INNER JOIN bridge b ON m.meeting_key = b.meeting_key
-        INNER JOIN accounts a ON a.account_key = b.account_key
-        WHERE a.account_id = ?";
-*/
 // Bridge tables fun :)
 $sql = "SELECT m.* FROM meeting m INNER JOIN bridge b ON m.meeting_key = b.meeting_key INNER JOIN users a ON a.id = b.account_key WHERE a.id = ?;";
 
