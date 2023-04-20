@@ -37,42 +37,36 @@ $address_err = $endtime_err = $itemkey_err = $md_err = $oi_err = $st_err = "";
 
 if($_SERVER["REQUEST_METHOD"] == "POST"){
 
-    // Check if username is empty
     if(empty(trim($_POST["Address"]))){
         $address_err = "Please enter username.";
     } else{
         $address = trim($_POST["Address"]);
     }
 
-    // Check if username is empty
     if(empty(trim($_POST["EndTime"]))){
         $endtime_err = "Please enter username.";
     } else{
         $endtime = trim($_POST["EndTime"]);
     }
 
-    // Check if username is empty
     if(empty(trim($_POST["ItemKey"]))){
         $itemkey_err = "Please enter username.";
     } else{
         $itemkey = trim($_POST["ItemKey"]);
     }
 
-    // Check if username is empty
     if(empty(trim($_POST["MD"]))){
         $md_err = "Please enter username.";
     } else{
         $md = trim($_POST["MD"]);
     }
 
-    // Check if username is empty
     if(empty(trim($_POST["OI"]))){
         $oi_err = "Please enter username.";
     } else{
         $oi = trim($_POST["OI"]);
     }
 
-    // Check if username is empty
     if(empty(trim($_POST["ST"]))){
         $st_err = "Please enter username.";
     } else{
