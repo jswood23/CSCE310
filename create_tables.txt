@@ -16,6 +16,15 @@ CREATE TABLE accounts (
 
 Review table (Sam):
 
+CREATE TABLE reviews (
+    review_key INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    account_key INT NOT NULL REFERENCES accounts(account_key),
+    item_key INT NOT NULL REFERENCES items(item_key),
+    header VARCHAR(255) NOT NULL,
+    body VARCHAR(400) NOT NULL,
+    stars INT DEFAULT 0,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
 
 
 Item table (Owen):
