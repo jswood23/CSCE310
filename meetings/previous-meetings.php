@@ -26,7 +26,7 @@ $curUserEmail = $_SESSION["username"];
 <body>
 <?php
 
-// Bridge tables fun :)
+// Bridge tables are fun to deal with :)
 $sql = "SELECT m.* FROM meeting m INNER JOIN bridge b ON m.meeting_key = b.meeting_key INNER JOIN users a ON a.id = b.account_key WHERE a.id = ?;";
 
 if($stmt = $mysqli->prepare($sql)){
