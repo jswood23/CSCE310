@@ -1,0 +1,55 @@
+These are the SQL Queries that were run to create the tables in the database:
+
+Account table (Josh):
+
+CREATE TABLE accounts (
+    account_key INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    name_first VARCHAR(50) NOT NULL UNIQUE,
+    name_last VARCHAR(50) NOT NULL UNIQUE,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    permission INT DEFAULT 0,
+    bio VARCHAR(400),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+
+Review table (Sam):
+
+CREATE TABLE reviews (
+    review_key INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    account_key INT NOT NULL REFERENCES accounts(account_key),
+    item_key INT NOT NULL REFERENCES items(item_key),
+    header VARCHAR(255) NOT NULL,
+    body VARCHAR(400) NOT NULL,
+    stars INT DEFAULT 0,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+
+Item table (Owen):
+
+CREATE TABLE items (
+    item_key INT NOT NULL PRIMARY KEY AUTO_INCREMENT
+);
+
+Meeting table (Mark):
+
+CREATE TABLE meeting (
+    meeting_key INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    start_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+    end_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+    address VARCHAR(400),
+    item_key INT NOT NULL  REFERENCES items(item_key),
+    meet_desc VARCHAR(400),
+    organizer INT NOT NULL  REFERENCES accounts(account_key)
+);
+
+
+Bridge table (Mark):
+
+CREATE TABLE bridge (
+    account_key INT NOT NULL  REFERENCES accounts(account_key),
+    meeting_key INT NOT NULL  REFERENCES meeting(meeting_key),
+    PRIMARY KEY (account_key, meeting_key)
+);
