@@ -13,8 +13,7 @@ if(!$loggedin){
 ?>
 
 <body>
-    <h1 class="my-5">Hi, <b><?php echo htmlspecialchars($_SESSION["name_first"]); ?></b>. Welcome to our site.</h1>
-    <h2>Your permission level is <?php echo $_SESSION["permission"] ?></h2>
+    <h1 class="my-5">Hi, <b><?php echo htmlspecialchars($_SESSION["name_first"]); ?></b>. Welcome to the book club.</h1>
     <p>
         <a href="reset-password.php" class="btn btn-warning">Reset Your Password</a>
         <a href="logout.php" class="btn btn-danger ml-3">Sign Out of Your Account</a>
