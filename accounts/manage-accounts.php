@@ -59,13 +59,13 @@ function accounts_as_table_rows() {
         echo "<td>$this_user_permission</td>";
         // show actions for each user
         if ($ans_permission == 2) {
-          echo "<td><a class='btn btn-info ml-3' href='#'>Remove Admin Permissions</a></td>";
+          echo "<td><a class='btn btn-info ml-3' href='change-permissions.php?account=$ans_account_key&permission=1'>Remove Admin Permissions</a></td>";
         } else if ($ans_permission == 1) {
-          echo "<td><a class='btn btn-info ml-3' href='#'>Add Admin Permissions</a></td>";
-          echo "<td><a class='btn btn-info ml-3' href='#'>Remove Member Permissions</a></td>";
+          echo "<td><a class='btn btn-info ml-3' href='change-permissions.php?account=$ans_account_key&permission=2'>Add Admin Permissions</a></td>";
+          echo "<td><a class='btn btn-info ml-3' href='change-permissions.php?account=$ans_account_key&permission=0'>Remove Member Permissions</a></td>";
         } else if ($ans_permission == 0) {
-          echo "<td><a class='btn btn-info ml-3' href='#'>Add Member Permissions</a></td>";
-          echo "<td><a class='btn btn-info ml-3' href='#'>Delete User Account</a></td>";
+          echo "<td><a class='btn btn-info ml-3' href='change-permissions.php?account=$ans_account_key&permission=1'>Add Member Permissions</a></td>";
+          echo "<td><a class='btn btn-info ml-3' href='change-permissions.php?account=$ans_account_key&permission=-1'>Delete User Account</a></td>";
         }
         echo "</tr>";
       }
