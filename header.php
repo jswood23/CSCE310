@@ -26,15 +26,15 @@ if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] == true){
 <body>
     <h1><a class="my-5" href="/" style="none">CSCE 310 Group 20 Book Club</a></h1>
     <?php if($loggedin) : ?>
-        <a href="/accounts/welcome.php">Welcome</a> /
-        <a href="/meetings/previous-meetings.php">Meetings</a> /
+        <a href="/accounts/welcome.php">Welcome</a>
+        / <a href="/meetings/previous-meetings.php">Meetings</a>
         <?php if($_SESSION["permission"] >= 2) : ?>
-            <a href="/accounts/manage-accounts.php">Manage Accounts</a>
+            / <a href="/accounts/manage-accounts.php">Manage Accounts</a>
         <?php endif; ?>
-        <br/>
     <?php else : ?>
-        <a href="/accounts/register.php">Register</a> /
-        <a href="/accounts/login.php">Login</a>
-        <br/>
+        <a href="/accounts/register.php">Register</a>
+        / <a href="/accounts/login.php">Login</a>
     <?php endif; ?>
+    / <a href="/accounts/logout.php">Logout</a>
+    </br>
 </body>
