@@ -4,11 +4,9 @@ include '../header.php';
 
 <?php
 // I made this code with the help of a tutorial: https://www.tutorialrepublic.com/php-tutorial/php-mysql-login-system.php
-// Initialize the session
-session_start();
 
 // Check if the user is logged in, if not then redirect him to login page
-if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
+if(!$loggedin){
     header("location: login.php");
     exit;
 }

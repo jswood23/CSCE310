@@ -1,5 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
+
+<?php
+// I made this code with the help of a tutorial: https://www.tutorialrepublic.com/php-tutorial/php-mysql-login-system.php
+// Initialize the session
+session_start();
+
+$loggedin = true;
+
+// Check if the user is logged in, if not then redirect him to login page
+if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
+    $loggedin = false;
+}
+?>
+
 <head>
     <meta charset="UTF-8">
     <title>Sign Up</title>
@@ -11,4 +25,13 @@
 </head>
 <body>
     <h1><a class="my-5" href="/" style="none">CSCE 310 Group 20 Book Club</a></h1>
+    <?php if($loggedin) : ?>
+        <a href="/accounts/welcome.php">Welcome</a>
+        <a href="/meetings/previous-meetings.php">Meetings</a>
+        <br/>
+    <?php else : ?>
+        <a href="/accounts/register.php">Register</a>
+        <a href="/accounts/login.php">login</a>
+        <br/>
+    <?php endif; ?>
 </body>

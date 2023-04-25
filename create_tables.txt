@@ -55,6 +55,6 @@ Bridge table (Mark):
 
 CREATE TABLE bridges (
     account_key INT NOT NULL  REFERENCES accounts(account_key),
-    meeting_key INT NOT NULL  REFERENCES meeting(meeting_key),
+    meeting_key INT NOT NULL  REFERENCES meetings(meeting_key),
     PRIMARY KEY (account_key, meeting_key)
 );

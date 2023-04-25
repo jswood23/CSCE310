@@ -3,11 +3,9 @@ include '../header.php';
 ?>
 
 <?php
-// Initialize the session
-session_start();
  
 // Check if the user is logged in, if not then redirect him to login page
-if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
+if(!$loggedin){
     header("location: login.php");
     exit;
 }
@@ -25,12 +23,12 @@ require_once "../config.php";
 <body>
 <?php
 
-    $sqlMeetings = "INSERT INTO meeting (address, end_time, item_key, meet_desc, organizer, start_time) VALUES (?,?,?,?,?,?);";
-    $sqlGetNewMeetingKey = "SELECT meeting_key FROM meeting WHERE address = ? AND end_time = ? AND item_key = ? AND meet_desc = ? AND organizer = ? AND start_time = ?";
+    $sqlMeetings = "INSERT INTO meetings (address, end_time, item_key, meet_desc, organizer, start_time) VALUES (?,?,?,?,?,?);";
+    $sqlGetNewMeetingKey = "SELECT meeting_key FROM meetings WHERE address = ? AND end_time = ? AND item_key = ? AND meet_desc = ? AND organizer = ? AND start_time = ?";
     $sqlBridge = "INSERT INTO bridge (account_key, meeting_key) VALUES (?,?);"; // For adding attendees to newly created meeting one-by-one
 
-    $curUserId = $_SESSION["id"];
-    $curUserEmail = $_SESSION["username"];
+    $curAccount = $_SESSION["account_key"];
+    $curUserEmail = $_SESSION["email"];
 
     $address = $endtime = $itemkey = $md = $oi = $st = $nmk = "";
     $address_err = $endtime_err = $itemkey_err = $md_err = $oi_err = $st_err = "";
@@ -95,7 +93,7 @@ require_once "../config.php";
                             // Now add attendees to bridge table 
                             if($stmt = $mysqli->prepare($sqlBridge)){
                                 // First add meeting creator as attendee
-                                $stmt->bind_param("ss", $curUserId, $nmk);
+                                $stmt->bind_param("ss", $curAccount, $nmk);
                                         
                                 // Attempt to execute the prepared statement
                                 if($stmt->execute()){
