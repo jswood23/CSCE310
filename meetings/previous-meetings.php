@@ -35,11 +35,11 @@ if($stmt = $mysqli->prepare($sql)){
     if($stmt->execute()){
         $result = $stmt->get_result();
         if($result->num_rows == 0){
-            echo "No previous meetings! You are user with id: ";
+            echo "<br>No previous meetings! You are user with id: ";
             echo $_SESSION["account_key"];
         }
         else{
-            echo "Previous meetings found: <br>";
+            echo "<h3>Meetings:</h3>";
             foreach ($result as $row) {
                 echo "Meeting Key: ";
                 echo $row['meeting_key'];
@@ -60,7 +60,7 @@ if($stmt = $mysqli->prepare($sql)){
                 echo $row['meet_desc'];
                 echo ", Organizer: ";
                 echo $row['organizer'];
-                echo "<br>";
+                echo "<br><br>";
             }
         }
     }
