@@ -6,11 +6,11 @@
 // Initialize the session
 session_start();
 
-$loggedin = true;
 
-// Check if the user is logged in, if not then redirect him to login page
-if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
-    $loggedin = false;
+// Check if the user is logged in
+$loggedin = false;
+if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] == true){
+    $loggedin = true;
 }
 ?>
 
