@@ -6,7 +6,19 @@ include '../header.php';
 // I made this code with the help of a tutorial: https://www.tutorialrepublic.com/php-tutorial/php-mysql-login-system.php
 // Include config file
 require_once "../config.php";
- 
+
+// determine whether there are any preexisting accounts
+$first_account = false;
+$sql = "SELECT account_key FROM accounts;";
+if($stmt = $mysqli->prepare($sql)){
+    if($stmt->execute()){
+        $result = $stmt->get_result();
+        if($result->num_rows == 0){
+            $first_account = true;
+        }
+    }
+}
+
 // Define variables and initialize with empty values
 $email = $name_first = $name_last = $password = $confirm_password = "";
 $email_err = $name_first_err = $name_last_err = $password_err = $confirm_password_err = "";
@@ -84,16 +96,17 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     if(empty($email_err) && empty($name_first_err) && empty($name_last_err) && empty($password_err) && empty($confirm_password_err)){
         
         // Prepare an insert statement
-        $sql = "INSERT INTO accounts (email, name_first, name_last, password) VALUES (?, ?, ?, ?)";
+        $sql = "INSERT INTO accounts (email, name_first, name_last, permission, password) VALUES (?, ?, ?, ?, ?)";
          
         if($stmt = $mysqli->prepare($sql)){
             // Bind variables to the prepared statement as parameters
-            $stmt->bind_param("ssss", $param_email, $param_name_first, $param_name_last, $param_password);
+            $stmt->bind_param("sssss", $param_email, $param_name_first, $param_name_last, $param_permission, $param_password);
             
             // Set parameters
             $param_email = $email;
             $param_name_first = $name_first;
             $param_name_last = $name_last;
+            $param_permission = $first_account ? 2 : 0;
             $param_password = password_hash($password, PASSWORD_DEFAULT); // Creates a password hash
             
             // Attempt to execute the prepared statement
@@ -118,7 +131,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                         // Store data in session variables
                         $_SESSION["loggedin"] = true;
                         $_SESSION["account_key"] = $account_key;
-                        $_SESSION["permission"] = $permission;
+                        $_SESSION["permission"] = $param_permission;
                         $_SESSION["email"] = $email;
                         $_SESSION["name_first"] = $name_first;
                     }
