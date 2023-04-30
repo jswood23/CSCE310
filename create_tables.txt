@@ -40,7 +40,7 @@ CREATE TABLE items (
 
 Meeting table (Mark):
 
-CREATE TABLE meeting (
+CREATE TABLE meetings (
     meeting_key INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     start_time DATETIME DEFAULT CURRENT_TIMESTAMP,
     end_time DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -53,8 +53,8 @@ CREATE TABLE meeting (
 
 Bridge table (Mark):
 
-CREATE TABLE bridge (
+CREATE TABLE bridges (
     account_key INT NOT NULL  REFERENCES accounts(account_key),
-    meeting_key INT NOT NULL  REFERENCES meeting(meeting_key),
+    meeting_key INT NOT NULL  REFERENCES meetings(meeting_key),
     PRIMARY KEY (account_key, meeting_key)
 );

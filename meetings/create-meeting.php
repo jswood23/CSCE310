@@ -3,12 +3,10 @@ include '../header.php';
 ?>
 
 <?php
-// Initialize the session
-session_start();
  
 // Check if the user is logged in, if not then redirect him to login page
-if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
-    header("location: login.php");
+if(!$loggedin){
+    header("location: ../accounts/login.php");
     exit;
 }
 
@@ -25,12 +23,12 @@ require_once "../config.php";
 <body>
 <?php
 
-    $sqlMeetings = "INSERT INTO meeting (address, end_time, item_key, meet_desc, organizer, start_time) VALUES (?,?,?,?,?,?);";
-    $sqlGetNewMeetingKey = "SELECT meeting_key FROM meeting WHERE address = ? AND end_time = ? AND item_key = ? AND meet_desc = ? AND organizer = ? AND start_time = ?";
-    $sqlBridge = "INSERT INTO bridge (account_key, meeting_key) VALUES (?,?);"; // For adding attendees to newly created meeting one-by-one
+    $sqlMeetings = "INSERT INTO meetings (address, end_time, item_key, meet_desc, organizer, start_time) VALUES (?,?,?,?,?,?);";
+    $sqlGetNewMeetingKey = "SELECT meeting_key FROM meetings WHERE address = ? AND end_time = ? AND item_key = ? AND meet_desc = ? AND organizer = ? AND start_time = ?";
+    $sqlBridge = "INSERT INTO bridges (account_key, meeting_key) VALUES (?,?);"; // For adding attendees to newly created meeting one-by-one
 
-    $curUserId = $_SESSION["id"];
-    $curUserEmail = $_SESSION["username"];
+    $curAccount = $_SESSION["account_key"];
+    $curUserEmail = $_SESSION["email"];
 
     $address = $endtime = $itemkey = $md = $oi = $st = $nmk = "";
     $address_err = $endtime_err = $itemkey_err = $md_err = $oi_err = $st_err = "";
@@ -38,37 +36,37 @@ require_once "../config.php";
     if($_SERVER["REQUEST_METHOD"] == "POST"){
 
         if(empty(trim($_POST["Address"]))){
-            $address_err = "Please enter username.";
+            $address_err = "Please enter address.";
         } else{
             $address = trim($_POST["Address"]);
         }
 
         if(empty(trim($_POST["EndTime"]))){
-            $endtime_err = "Please enter username.";
+            $endtime_err = "Please enter endtime.";
         } else{
             $endtime = trim($_POST["EndTime"]);
         }
 
-        if(empty(trim($_POST["ItemKey"]))){
-            $itemkey_err = "Please enter username.";
+        if(empty(trim($_POST["ary2"]))){
+            $itemkey_err = "Please select item.";
         } else{
-            $itemkey = trim($_POST["ItemKey"]);
+            $itemkey = trim($_POST["ary2"]);
         }
 
         if(empty(trim($_POST["MD"]))){
-            $md_err = "Please enter username.";
+            $md_err = "Please enter meeting description.";
         } else{
             $md = trim($_POST["MD"]);
         }
 
         if(empty(trim($_POST["OI"]))){
-            $oi_err = "Please enter username.";
+            $oi_err = "Please enter organizare id's.";
         } else{
             $oi = trim($_POST["OI"]);
         }
 
         if(empty(trim($_POST["ST"]))){
-            $st_err = "Please enter username.";
+            $st_err = "Please enter start time.";
         } else{
             $st = trim($_POST["ST"]);
         }
@@ -95,7 +93,7 @@ require_once "../config.php";
                             // Now add attendees to bridge table 
                             if($stmt = $mysqli->prepare($sqlBridge)){
                                 // First add meeting creator as attendee
-                                $stmt->bind_param("ss", $curUserId, $nmk);
+                                $stmt->bind_param("ss", $curAccount, $nmk);
                                         
                                 // Attempt to execute the prepared statement
                                 if($stmt->execute()){
@@ -114,49 +112,109 @@ require_once "../config.php";
                 }
             }
         }
-        header('Location: /users/welcome.php');
+        header('Location: /accounts/welcome.php');
     }
 
     //$mysqli->close();
 ?>
-
-Create New Meeting:
+<br>
+<h3>Create New Meeting:</h3>
 <br>
 <form method ="post" name="trial">
-
+    
     Address: <input type="text" name="Address" id="testId">
     <br><br>
     Start Time: <input type="datetime-local" name="ST" id="testId">
     <br><br>
     End Time: <input type="datetime-local" name="EndTime" id="testId">
     <br><br>
-    Item Key: <input type="text" name="ItemKey" id="testId">
+    Select Item for Meeting Topic: <br>
+    <select name="ary2">
+        <?php
+
+            $sqlGetPossibleAttendees = "SELECT * FROM items";
+
+            if($stmt = $mysqli->prepare($sqlGetPossibleAttendees)){
+                // Get list of possible items
+                if($stmt->execute()){
+                    $result = $stmt->get_result();
+                    if($result->num_rows == 0){
+                        echo "No items in this database! You need to have a topic for your meeting... so create an item first.";
+                    }
+                    else{
+                        foreach ($result as $row) {
+                            echo "<option value='";
+                            echo $row['item_key'];
+                            echo "'>";
+                            echo $row['item_title'];
+                            echo "</option>";
+                            
+                        }
+                    }
+                }
+            }
+
+            //$mysqli->close();
+        ?> 
+    </select>
     <br><br>
     Meeting Description: <input type="text" name="MD" id="testId">
     <br><br>
-    Organizer's ID: <input type="text" name="OI" id="testId">
-    <br><br>
-    Select All Attendees: <br>
-    <select name="ary[]" multiple="multiple">
+    Select the Organizer of Meeting:
+    <select name="OI">
         <?php
 
-            $sqlGetPossibleAttendees = "SELECT * FROM users";
+            $sqlGetPossibleAttendees = "SELECT * FROM accounts";
 
             if($stmt = $mysqli->prepare($sqlGetPossibleAttendees)){
                 // Get list of possible attendees
                 if($stmt->execute()){
                     $result = $stmt->get_result();
                     if($result->num_rows == 0){
-                        echo "No other users in this database! You will be the only attendee, nothing wrong with a solo meeting :) ";
+                        echo "No other users in this database! You will be the only attendee, but thats alright :) ";
                     }
                     else{
                         foreach ($result as $row) {
-                            echo "<option value='";
-                            echo $row['id'];
-                            echo "'>";
-                            echo $row['username'];
-                            echo "</option>";
-                            
+                                echo "<option value='";
+                                echo $row['account_key'];
+                                echo "'>";
+                                echo $row['name_first'];
+                                echo " ";
+                                echo $row['name_last'];
+                                echo "</option>";
+                        }
+                    }
+                }
+            }
+
+            //$mysqli->close();
+        ?> 
+    </select>
+    <br><br>
+    Select All Attendees (you are an attendee by default): <br>
+    <select name="ary[]" multiple="multiple">
+        <?php
+
+            $sqlGetPossibleAttendees = "SELECT * FROM accounts";
+
+            if($stmt = $mysqli->prepare($sqlGetPossibleAttendees)){
+                // Get list of possible attendees
+                if($stmt->execute()){
+                    $result = $stmt->get_result();
+                    if($result->num_rows == 0){
+                        echo "No other users in this database! You will be the only attendee, but thats alright :) ";
+                    }
+                    else{
+                        foreach ($result as $row) {
+                            if($row['account_key'] != $_SESSION["account_key"]){
+                                echo "<option value='";
+                                echo $row['account_key'];
+                                echo "'>";
+                                echo $row['name_first'];
+                                echo " ";
+                                echo $row['name_last'];
+                                echo "</option>";
+                            }
                         }
                     }
                 }

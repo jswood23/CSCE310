@@ -3,12 +3,10 @@ include '../header.php';
 ?>
 
 <?php
-// Initialize the session
-session_start();
  
 // Check if the user is logged in, if not then redirect him to login page
-if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
-    header("location: login.php");
+if(!$loggedin){
+    header("location: ../accounts/login.php");
     exit;
 }
 
@@ -16,8 +14,8 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 // Include config file
 require_once "../config.php";
 
-$curUserId = $_SESSION["id"];
-$curUserEmail = $_SESSION["username"];
+$curAccount = $_SESSION["account_key"];
+$curUserEmail = $_SESSION["email"];
 
 ?>
 
@@ -27,21 +25,21 @@ $curUserEmail = $_SESSION["username"];
 <?php
 
 // Bridge tables are fun to deal with :)
-$sql = "SELECT m.* FROM meeting m INNER JOIN bridge b ON m.meeting_key = b.meeting_key INNER JOIN users a ON a.id = b.account_key WHERE a.id = ?;";
+$sql = "SELECT m.* FROM meetings m INNER JOIN bridges b ON m.meeting_key = b.meeting_key INNER JOIN accounts a ON a.account_key = b.account_key WHERE a.account_key = ?;";
 
 if($stmt = $mysqli->prepare($sql)){
     // Bind variables to the prepared statement as parameters
-    $stmt->bind_param("s", $_SESSION["id"]);
+    $stmt->bind_param("s", $_SESSION["account_key"]);
             
     // Attempt to execute the prepared statement
     if($stmt->execute()){
         $result = $stmt->get_result();
         if($result->num_rows == 0){
-            echo "No previous meetings! You are user with id: ";
-            echo $_SESSION["id"];
+            echo "<br>No previous meetings! You are user with id: ";
+            echo $_SESSION["account_key"];
         }
         else{
-            echo "Previous meetings found: <br>";
+            echo "<h3>Meetings:</h3>";
             foreach ($result as $row) {
                 echo "Meeting Key: ";
                 echo $row['meeting_key'];
@@ -62,7 +60,7 @@ if($stmt = $mysqli->prepare($sql)){
                 echo $row['meet_desc'];
                 echo ", Organizer: ";
                 echo $row['organizer'];
-                echo "<br>";
+                echo "<br><br>";
             }
         }
     }
