@@ -28,8 +28,10 @@ if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] == true){
     <?php if($loggedin) : ?>
         <a href="/accounts/welcome.php">Welcome</a>
         / <a href="/meetings/previous-meetings.php">Meetings</a>
+        / <a href="/items/get-items.php">Items</a>
         <?php if($_SESSION["permission"] >= 2) : ?>
             / <a href="/accounts/manage-accounts.php">Manage Accounts</a>
+            / <a href="/items/create-items.php">Add new item</a>
         <?php endif; ?>
     <?php else : ?>
         <a href="/accounts/register.php">Register</a>
