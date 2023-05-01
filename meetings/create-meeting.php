@@ -115,7 +115,6 @@ require_once "../config.php";
         header('Location: /accounts/welcome.php');
     }
 
-    //$mysqli->close();
 ?>
 <br>
 <h3>Create New Meeting:</h3>
@@ -154,7 +153,6 @@ require_once "../config.php";
                 }
             }
 
-            //$mysqli->close();
         ?> 
     </select>
     <br><br>
@@ -187,7 +185,6 @@ require_once "../config.php";
                 }
             }
 
-            //$mysqli->close();
         ?> 
     </select>
     <br><br>
