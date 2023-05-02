@@ -33,7 +33,7 @@ $curUserEmail = $_SESSION["email"];
     if($_SERVER["REQUEST_METHOD"] == "POST"){
         if($stmt = $mysqli->prepare($sqlDeleteFromMeeing)){
 
-            // Prepare sql delete statement
+            // Prepare sql delete statement that will remove them from meeting
             $postKeys = array_keys($_POST);
             $meetingId = $postKeys[0]; 
             $stmt->bind_param("ss", $curAccount, $meetingId);
@@ -68,6 +68,7 @@ $curUserEmail = $_SESSION["email"];
             }
             else{
                 echo "<br><h3>Your Meetings:</h3>";
+                // Display all meetings they are atendee for
                 foreach ($result as $row) {
                     echo "<Strong>Meeting Key: </Strong>";
                     echo $row['meeting_key'];
@@ -88,6 +89,7 @@ $curUserEmail = $_SESSION["email"];
                     echo $row['meet_desc'];
                     echo ", <Strong>Organizer ID: </Strong>";
                     echo $row['organizer'];
+                    // Also give them the option to unenroll from meeting
                     echo "<form method='post'><input type='submit' class='button' name='";
                     echo $row['meeting_key'];
                     echo "' value='Remove yourself from meeting'></form>";

@@ -14,10 +14,11 @@ if(!$loggedin){
 // Include config file
 require_once "../config.php";
 
-// Load in original details of the selected meeting from last page, so they can be presented to user
 $sqlGetSelectedMeeting = "SELECT * FROM meetings WHERE meeting_key = ?";
 $sqlGetCurrentAttendees = "SELECT * FROM bridges WHERE bridges.meeting_key = ?";
 $address = $endtime = $itemkey = $md = $oi = $st = "";
+
+// Load in original details of the selected meeting from last page, so they can be presented to user
 if($stmt = $mysqli->prepare($sqlGetSelectedMeeting)){
 
     // Get meeting
@@ -55,6 +56,7 @@ if($stmt = $mysqli->prepare($sqlGetSelectedMeeting)){
 
     if($_SERVER["REQUEST_METHOD"] == "POST"){
 
+        // Make sure that every field is populated
         if(empty(trim($_POST["Address"]))){
             $address_err = "Please enter address.";
         } else{
@@ -94,12 +96,13 @@ if($stmt = $mysqli->prepare($sqlGetSelectedMeeting)){
         if(empty($address_err) && empty($endtime_err) && empty($itemkey_err) && empty($md_err) && empty($oi_err) && empty($st_err)){
             if($stmt = $mysqli->prepare($sqlUpdateMeeting)){
 
-                // Update meeting table for this specific meeting
+                // Update the meeting table itself for this specific meeting
                 $stmt->bind_param("sssssss", $st, $endtime, $address, $itemkey, $md, $oi, $_SESSION["selected_meeting"]);
                         
                 // Attempt to execute the prepared statement
                 if($stmt->execute()){
-                    // Now remove current bridge entries (so as to not have duplicates)
+                    // Meetings table is now updated, now to focus on bridges table
+                    // First remove current bridge entries (so as to not have duplicates)
                     if($stmt = $mysqli->prepare($sqlGetCurrentAttendees)){
                         // Get list of current attendess
                         $stmt->bind_param("s", $_SESSION["selected_meeting"]);
@@ -107,16 +110,18 @@ if($stmt = $mysqli->prepare($sqlGetSelectedMeeting)){
                             $curAttendees = $stmt->get_result();
                         }
                     }
+                    // Remove current user from bridge table
                     $stmt = $mysqli->prepare($sqlBridgeDelete);
                     $stmt->bind_param("ss", $curAccount, $_SESSION["selected_meeting"]);
                     $stmt->execute();
+                    // Remove all other attendees from bridge table
                     foreach (mysqli_fetch_array($curAttendees) as $a){
                         $stmt = $mysqli->prepare($sqlBridgeDelete);
                         $stmt->bind_param("ss", $a, $_SESSION["selected_meeting"]);
                         $stmt->execute();
                     }
                     
-                    // Now add attendees to bridge table 
+                    // Now add new list of attendees to bridge table 
                     if($stmt = $mysqli->prepare($sqlBridgeInsert)){
                         // First add meeting creator as attendee
                         $stmt->bind_param("ss", $curAccount, $_SESSION["selected_meeting"]);

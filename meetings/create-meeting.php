@@ -29,7 +29,8 @@ require_once "../config.php";
 
     $sqlMeetings = "INSERT INTO meetings (address, end_time, item_key, meet_desc, organizer, start_time) VALUES (?,?,?,?,?,?);";
     $sqlGetNewMeetingKey = "SELECT meeting_key FROM meetings WHERE address = ? AND end_time = ? AND item_key = ? AND meet_desc = ? AND organizer = ? AND start_time = ?";
-    $sqlBridge = "INSERT INTO bridges (account_key, meeting_key) VALUES (?,?);"; // For adding attendees to newly created meeting one-by-one
+    // For adding attendees to newly created meeting one-by-one
+    $sqlBridge = "INSERT INTO bridges (account_key, meeting_key) VALUES (?,?);"; 
 
     $curAccount = $_SESSION["account_key"];
     $curUserEmail = $_SESSION["email"];
@@ -39,6 +40,7 @@ require_once "../config.php";
 
     if($_SERVER["REQUEST_METHOD"] == "POST"){
 
+        // Make sure that every field is populated
         if(empty(trim($_POST["Address"]))){
             $address_err = "Please enter address.";
         } else{
@@ -145,6 +147,7 @@ require_once "../config.php";
                         echo "No items in this database! You need to have a topic for your meeting... so create an item first.";
                     }
                     else{
+                        // Show selector for items
                         foreach ($result as $row) {
                             echo "<option value='";
                             echo $row['item_key'];
@@ -172,15 +175,16 @@ require_once "../config.php";
                 // Get list of possible attendees
                 if($stmt->execute()){
                     $result = $stmt->get_result();
-                        foreach ($result as $row) {
-                                echo "<option value='";
-                                echo $row['account_key'];
-                                echo "'>";
-                                echo $row['name_first'];
-                                echo " ";
-                                echo $row['name_last'];
-                                echo "</option>";
-                        }
+                    // Show selector for attendees
+                    foreach ($result as $row) {
+                            echo "<option value='";
+                            echo $row['account_key'];
+                            echo "'>";
+                            echo $row['name_first'];
+                            echo " ";
+                            echo $row['name_last'];
+                            echo "</option>";
+                    }
                     
                 }
             }
@@ -202,7 +206,9 @@ require_once "../config.php";
                         echo "No other users in this database! You will be the only attendee, but thats alright :) ";
                     }
                     else{
+                        // Show selector for attendeese
                         foreach ($result as $row) {
+                            // The user must be attendee by default, so don't show themselves to avoid duplictates
                             if($row['account_key'] != $_SESSION["account_key"]){
                                 echo "<option value='";
                                 echo $row['account_key'];

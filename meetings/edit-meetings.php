@@ -24,13 +24,49 @@ $curUserEmail = $_SESSION["email"];
 <body>
 
 <?php
-    if($_SERVER["REQUEST_METHOD"] == "POST"){
+    $sqlMeetingDelete = "DELETE FROM meetings WHERE meetings.meeting_key = ?"; 
+    $sqlBridgeDelete = "DELETE FROM bridges WHERE bridges.account_key = ? AND bridges.meeting_key = ?";
+    $sqlGetCurrentAttendees = "SELECT * FROM bridges WHERE bridges.meeting_key = ?"; 
 
-        // Get meeting id to be updated, store it in session, and go to single meeting update page
+    if($_SERVER["REQUEST_METHOD"] == "POST"){
+        // Get meeting id of the button pressed
         $postKeys = array_keys($_POST);
         $meetingId = $postKeys[0]; 
-        $_SESSION["selected_meeting"] = $meetingId;
-        header('Location: /meetings/single-meeting-edit.php');
+        if(strpos($meetingId, "D")){
+            // They want to delete the meeting selected
+            $meetingId = substr($meetingId, 0, -1);
+
+            // Remove all bridge entries for meeting
+            if($stmt = $mysqli->prepare($sqlGetCurrentAttendees)){
+                // Get list of current attendess
+                $stmt->bind_param("s", $meetingId);
+                if($stmt->execute()){
+                    $curAttendees = $stmt->get_result();
+                }
+            }
+            $stmt = $mysqli->prepare($sqlBridgeDelete);
+            $stmt->bind_param("ss", $curAccount, $meetingId);
+            $stmt->execute();
+            foreach (mysqli_fetch_array($curAttendees) as $a){
+                $stmt = $mysqli->prepare($sqlBridgeDelete);
+                $stmt->bind_param("ss", $a, $meetingId);
+                $stmt->execute();
+            }
+
+            // Now delete the meeting itself
+            if($stmt = $mysqli->prepare($sqlMeetingDelete)){
+                $stmt->bind_param("s", $meetingId);
+                if($stmt->execute()){
+                    // Now refresh page so deleted meeting is reflected
+                    header("Refresh:0");
+                }
+            }
+        }
+        else{
+            // They want to edit the meeting, store ID in session, and go to single meeting update page
+            $_SESSION["selected_meeting"] = $meetingId;
+            header('Location: /meetings/single-meeting-edit.php');
+        }
     }
 
 ?>
@@ -52,6 +88,7 @@ $curUserEmail = $_SESSION["email"];
             }
             else{
                 echo "<br><h3>Meetings You Organize:</h3>";
+                // Present all meetings to the user
                 foreach ($result as $row) {
                     echo "<Strong>Meeting Key: </Strong>";
                     echo $row['meeting_key'];
@@ -75,6 +112,9 @@ $curUserEmail = $_SESSION["email"];
                     echo "<form method='post'><input type='submit' class='button' name='";
                     echo $row['meeting_key'];
                     echo "' value='Update meeting'></form>";
+                    echo "<form method='post'><input type='submit' class='button' name='";
+                    echo $row['meeting_key'];
+                    echo "D' value='Delete meeting'></form>";
                     echo "<br><br>";
                 }
             }
