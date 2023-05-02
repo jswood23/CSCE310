@@ -35,14 +35,8 @@ $curUserEmail = $_SESSION["email"];
             // Prepare sql delete statement
             $postKeys = array_keys($_POST);
             $meetingId = $postKeys[0]; 
-            $stmt->bind_param("ss", $curAccount, $meetingId);
-                    
-            // Attempt to execute the prepared statement
-            if($stmt->execute()){
-                echo "<Strong>Successfully removed from meeting with id ";
-                echo $meetingId;
-                echo "</Strong>";
-            }
+            
+            echo "Meeting Edited!";
         }
     }
 
@@ -51,22 +45,20 @@ $curUserEmail = $_SESSION["email"];
 <?php
 
     // Bridge tables are fun to deal with :)
-    $sql = "SELECT m.* FROM meetings m INNER JOIN bridges b ON m.meeting_key = b.meeting_key INNER JOIN accounts a ON a.account_key = b.account_key WHERE a.account_key = ?;";
+    $sql = "SELECT m.* FROM meetings m INNER JOIN bridges b ON m.meeting_key = b.meeting_key INNER JOIN accounts a ON a.account_key = b.account_key WHERE a.account_key = ? AND m.organizer = ?;";
 
     if($stmt = $mysqli->prepare($sql)){
         // Bind variables to the prepared statement as parameters
-        $stmt->bind_param("s", $_SESSION["account_key"]);
+        $stmt->bind_param("ss", $_SESSION["account_key"], $_SESSION["account_key"]);
                 
         // Attempt to execute the prepared statement
         if($stmt->execute()){
             $result = $stmt->get_result();
             if($result->num_rows == 0){
-                echo "<br><h3>No previous meetings! You are user with id: ";
-                echo $_SESSION["account_key"];
-                echo "</h3>";
+                echo "<br><h3>You are not the organizer of any meetings!</h3>";
             }
             else{
-                echo "<br><h3>Your Meetings:</h3>";
+                echo "<br><h3>Meetings you organize:</h3>";
                 foreach ($result as $row) {
                     echo "<Strong>Meeting Key: </Strong>";
                     echo $row['meeting_key'];
@@ -89,7 +81,7 @@ $curUserEmail = $_SESSION["email"];
                     echo $row['organizer'];
                     echo "<form method='post'><input type='submit' class='button' name='";
                     echo $row['meeting_key'];
-                    echo "' value='Remove yourself from meeting'></form>";
+                    echo "' value='Edit meeting'></form>";
                     echo "<br><br>";
                 }
             }

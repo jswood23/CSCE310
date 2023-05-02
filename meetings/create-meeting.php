@@ -10,6 +10,10 @@ if(!$loggedin){
     exit;
 }
 
+if($_SESSION["permission"] < 2){
+    header('Location: /accounts/welcome.php');
+    exit;
+}
 
 // Include config file
 require_once "../config.php";
@@ -111,8 +115,8 @@ require_once "../config.php";
                     }
                 }
             }
+            header('Location: /accounts/welcome.php');
         }
-        header('Location: /accounts/welcome.php');
     }
 
 ?>
@@ -168,10 +172,6 @@ require_once "../config.php";
                 // Get list of possible attendees
                 if($stmt->execute()){
                     $result = $stmt->get_result();
-                    if($result->num_rows == 0){
-                        echo "No other users in this database! You will be the only attendee, but thats alright :) ";
-                    }
-                    else{
                         foreach ($result as $row) {
                                 echo "<option value='";
                                 echo $row['account_key'];
@@ -181,7 +181,7 @@ require_once "../config.php";
                                 echo $row['name_last'];
                                 echo "</option>";
                         }
-                    }
+                    
                 }
             }
 
