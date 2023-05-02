@@ -24,27 +24,20 @@ $curUserEmail = $_SESSION["email"];
 <body>
 
 <?php
-
-    $sqlDeleteFromMeeing = "DELETE FROM bridges WHERE `bridges`.`account_key` = ? AND `bridges`.`meeting_key` = ?";
-    
-    $curAccount = $_SESSION["account_key"];
-    
     if($_SERVER["REQUEST_METHOD"] == "POST"){
-        if($stmt = $mysqli->prepare($sqlDeleteFromMeeing)){
 
-            // Prepare sql delete statement
-            $postKeys = array_keys($_POST);
-            $meetingId = $postKeys[0]; 
-            
-            echo "Meeting Edited!";
-        }
+        // Get meeting id to be updated, store it in session, and go to single meeting update page
+        $postKeys = array_keys($_POST);
+        $meetingId = $postKeys[0]; 
+        $_SESSION["selected_meeting"] = $meetingId;
+        header('Location: /meetings/single-meeting-edit.php');
     }
 
 ?>
     
 <?php
 
-    // Bridge tables are fun to deal with :)
+    // Get all meetings that this user is the organizer for
     $sql = "SELECT m.* FROM meetings m INNER JOIN bridges b ON m.meeting_key = b.meeting_key INNER JOIN accounts a ON a.account_key = b.account_key WHERE a.account_key = ? AND m.organizer = ?;";
 
     if($stmt = $mysqli->prepare($sql)){
@@ -58,7 +51,7 @@ $curUserEmail = $_SESSION["email"];
                 echo "<br><h3>You are not the organizer of any meetings!</h3>";
             }
             else{
-                echo "<br><h3>Meetings you organize:</h3>";
+                echo "<br><h3>Meetings You Organize:</h3>";
                 foreach ($result as $row) {
                     echo "<Strong>Meeting Key: </Strong>";
                     echo $row['meeting_key'];
@@ -81,7 +74,7 @@ $curUserEmail = $_SESSION["email"];
                     echo $row['organizer'];
                     echo "<form method='post'><input type='submit' class='button' name='";
                     echo $row['meeting_key'];
-                    echo "' value='Edit meeting'></form>";
+                    echo "' value='Update meeting'></form>";
                     echo "<br><br>";
                 }
             }

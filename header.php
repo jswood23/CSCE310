@@ -24,7 +24,7 @@ if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] == true){
     </style>
 </head>
 <body>
-    <h1><a class="my-5" href="/" style="none">CSCE 310 Group 20 Book Club</a></h1>
+    <h1><a class="my-5" href="/accounts/welcome.php" style="none">CSCE 310 Group 20 Book Club</a></h1>
     <?php if($loggedin) : ?>
         <a href="/accounts/welcome.php">Welcome</a>
         / <a href="/meetings/previous-meetings.php">Meetings</a>

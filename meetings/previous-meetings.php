@@ -25,10 +25,11 @@ $curUserEmail = $_SESSION["email"];
 
 <?php
 
-    $sqlDeleteFromMeeing = "DELETE FROM bridges WHERE `bridges`.`account_key` = ? AND `bridges`.`meeting_key` = ?";
+    $sqlDeleteFromMeeing = "DELETE FROM bridges WHERE bridges.account_key = ? AND bridges.meeting_key = ?";
     
     $curAccount = $_SESSION["account_key"];
     
+    // They requested to be removed from the roster of a meeting
     if($_SERVER["REQUEST_METHOD"] == "POST"){
         if($stmt = $mysqli->prepare($sqlDeleteFromMeeing)){
 
@@ -50,7 +51,7 @@ $curUserEmail = $_SESSION["email"];
     
 <?php
 
-    // Bridge tables are fun to deal with :)
+    // Get all meetings that this user is an attendee for
     $sql = "SELECT m.* FROM meetings m INNER JOIN bridges b ON m.meeting_key = b.meeting_key INNER JOIN accounts a ON a.account_key = b.account_key WHERE a.account_key = ?;";
 
     if($stmt = $mysqli->prepare($sql)){
