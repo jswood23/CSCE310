@@ -14,9 +14,6 @@ if(!$loggedin){
 // Include config file
 require_once "../config.php";
 
-$curAccount = $_SESSION["account_key"];
-$curUserEmail = $_SESSION["email"];
-
 ?>
 
 <!DOCTYPE html>
@@ -24,40 +21,38 @@ $curUserEmail = $_SESSION["email"];
 <body>
 <?php
 
-// Bridge tables are fun to deal with :)
+// Get all items in datbase 
 $sql = "SELECT * FROM items;";
 
-if($stmt = $mysqli->prepare($sql)){
-    // Bind variables to the prepared statement as parameters
-    //$stmt->bind_param("s", $_SESSION["account_key"]);
-           
+if($stmt = $mysqli->prepare($sql)){           
     // Attempt to execute the prepared statement
     if($stmt->execute()){
         $result = $stmt->get_result();
         if($result->num_rows == 0){
-            echo "<br>No items added!";
+            echo "<br><h3>No items added!</h3>";
         }
         else{
+          // Displaying all items in database
             echo "<h3>Items:</h3>";
             foreach ($result as $row) {
                 echo "Item Key: ";
                 echo $row['item_key'];
-                echo ", ";
+                echo ",  ";
                 echo "Title: ";
                 echo $row['item_title'];
-                echo ", ";
+                echo ",  ";
                 echo "Author: ";
                 echo $row['author'];
-                echo ", ";
+                echo ",  ";
                 echo "ISBN: ";
                 echo $row['isbn'];
-                echo ", ";
+                echo ",  ";
                 echo "Date added: ";
                 echo $row['date_added'];
-                echo ", ";
+                echo ",  ";
                 echo "Summary of "; 
                 echo $row["item_title"];
-                echo ": ";
+                echo ":  ";
                 echo $row['summary'];
                 echo "<br><br>";
             }

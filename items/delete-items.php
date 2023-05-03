@@ -10,6 +10,10 @@ if(!$loggedin){
     exit;
 }
 
+if($_SESSION["permission"] < 2){
+    header('Location: /accounts/welcome.php');
+    exit;
+}
 
 // Include config file
 require_once "../config.php";
