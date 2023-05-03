@@ -10,6 +10,11 @@ if(!$loggedin){
     exit;
 }
 
+if($_SESSION["permission"] < 2){
+    header('Location: /accounts/welcome.php');
+    exit;
+}
+
 
 // Include config file
 require_once "../config.php";
@@ -26,12 +31,9 @@ require_once "../config.php";
     $sqlItems = "INSERT INTO items (item_title, author, isbn, date_added, summary) VALUES (?,?,?,?,?);";
     $sqlGetNewItemKey = "SELECT item_title FROM items WHERE item_title = ? AND author = ? AND isbn = ? AND summary = ?";
 
-    $curAccount = $_SESSION["account_key"];
-    $curUserEmail = $_SESSION["email"];
-
-    $title = $author = $isbn = $summary = $nmk = "";
+    $title = $author = $isbn = $summary = $itemkey = "";
     $title_err = $author_err = $isbn_err = $summary_err = "";
-    $date_added = date("Y-m-d", time());
+    $date_added = date("Y-m-d h:i:sa", time());
 
     if($_SERVER["REQUEST_METHOD"] == "POST"){
         
@@ -59,16 +61,16 @@ require_once "../config.php";
             $summary = trim($_POST["Summary"]);
         }
 
-        if(empty($item_err) && empty($title_err) && empty($author_err) && empty($isbn_err)&& empty($summary_err)){
+        if(empty($item_err) && empty($title_err) && empty($author_err) && empty($isbn_err) && empty($summary_err)){
             if($stmt = $mysqli->prepare($sqlItems)){
 
-                // Create meeting
+                // Create item
                 $stmt->bind_param("ssiss", $title, $author, $isbn, $date_added, $summary);
                         
                 // Attempt to execute the prepared statement
                 if($stmt->execute()){
 
-                    // Now get meeting key that was just created
+                    // Now get item key that was just created
                     if($stmt = $mysqli->prepare($sqlGetNewItemKey)){
                         $stmt->bind_param("ssis", $title, $author, $isbn, $summary);
                                 
@@ -76,7 +78,7 @@ require_once "../config.php";
                         if($stmt->execute()){
                             $result = $stmt->get_result();
                             $row = $result->fetch_assoc();
-                            $nmk = $row['item_key'];
+                            $itemkey = $row['item_key'];
 
                         }
                     }
@@ -86,7 +88,6 @@ require_once "../config.php";
         header('Location: /accounts/welcome.php');
     }
 
-    //$mysqli->close();
 ?>
 <br>
 <h3>Add New Item:</h3>
