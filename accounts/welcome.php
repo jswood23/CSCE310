@@ -18,7 +18,12 @@ if(!$loggedin){
         <a href="reset-password.php" class="btn btn-warning">Reset Your Password</a>
         <a href="logout.php" class="btn btn-danger ml-3">Sign Out of Your Account</a>
         <a href="../meetings/previous-meetings.php" class="btn btn-primary ml-3">See all meetings</a>
-        <a href="../meetings/create-meeting.php" class="btn btn-info ml-3">Create new meeting</a>
+        <a href="../meetings/edit-meetings.php" class="btn btn-primary ml-3">Edit meetings you organize</a>
+        <?php
+            if($_SESSION["permission"] == 2){
+                echo "<a href='../meetings/create-meeting.php' class='btn btn-primary ml-3'>Create new meeting</a>";
+            }
+        ?>
         <a href="../items/create-items.php" class="btn btn-success ml-3">Create new item</a>
         <a href="../items/get-items.php" class="btn btn-success ml-3">See all items</a>
         <a href="../items/delete-items.php" class="btn btn-success ml-3">Delete item</a>        

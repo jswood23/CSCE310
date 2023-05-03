@@ -22,52 +22,85 @@ $curUserEmail = $_SESSION["email"];
 <!DOCTYPE html>
 <html>
 <body>
+
 <?php
 
-// Bridge tables are fun to deal with :)
-$sql = "SELECT m.* FROM meetings m INNER JOIN bridges b ON m.meeting_key = b.meeting_key INNER JOIN accounts a ON a.account_key = b.account_key WHERE a.account_key = ?;";
+    $sqlDeleteFromMeeing = "DELETE FROM bridges WHERE bridges.account_key = ? AND bridges.meeting_key = ?";
+    
+    $curAccount = $_SESSION["account_key"];
+    
+    // They requested to be removed from the roster of a meeting
+    if($_SERVER["REQUEST_METHOD"] == "POST"){
+        if($stmt = $mysqli->prepare($sqlDeleteFromMeeing)){
 
-if($stmt = $mysqli->prepare($sql)){
-    // Bind variables to the prepared statement as parameters
-    $stmt->bind_param("s", $_SESSION["account_key"]);
-            
-    // Attempt to execute the prepared statement
-    if($stmt->execute()){
-        $result = $stmt->get_result();
-        if($result->num_rows == 0){
-            echo "<br>No previous meetings! You are user with id: ";
-            echo $_SESSION["account_key"];
-        }
-        else{
-            echo "<h3>Meetings:</h3>";
-            foreach ($result as $row) {
-                echo "Meeting Key: ";
-                echo $row['meeting_key'];
-                echo ", ";
-                echo "Start Time: ";
-                echo $row['start_time'];
-                echo ", ";
-                echo "End Time: ";
-                echo $row['end_time'];
-                echo ", ";
-                echo "Address: ";
-                echo $row['address'];
-                echo ", ";
-                echo "Key of item being discussed: ";
-                echo $row['item_key'];
-                echo ", ";
-                echo "Meeting Description: ";
-                echo $row['meet_desc'];
-                echo ", Organizer: ";
-                echo $row['organizer'];
-                echo "<br><br>";
+            // Prepare sql delete statement that will remove them from meeting
+            $postKeys = array_keys($_POST);
+            $meetingId = $postKeys[0]; 
+            $stmt->bind_param("ss", $curAccount, $meetingId);
+                    
+            // Attempt to execute the prepared statement
+            if($stmt->execute()){
+                echo "<Strong>Successfully removed from meeting with id ";
+                echo $meetingId;
+                echo "</Strong>";
             }
         }
     }
-}
+
+?>
+    
+<?php
+
+    // Get all meetings that this user is an attendee for
+    $sql = "SELECT m.* FROM meetings m INNER JOIN bridges b ON m.meeting_key = b.meeting_key INNER JOIN accounts a ON a.account_key = b.account_key WHERE a.account_key = ?;";
+
+    if($stmt = $mysqli->prepare($sql)){
+        // Bind variables to the prepared statement as parameters
+        $stmt->bind_param("s", $_SESSION["account_key"]);
+                
+        // Attempt to execute the prepared statement
+        if($stmt->execute()){
+            $result = $stmt->get_result();
+            if($result->num_rows == 0){
+                echo "<br><h3>No previous meetings! You are user with id: ";
+                echo $_SESSION["account_key"];
+                echo "</h3>";
+            }
+            else{
+                echo "<br><h3>Your Meetings:</h3>";
+                // Display all meetings they are atendee for
+                foreach ($result as $row) {
+                    echo "<Strong>Meeting Key: </Strong>";
+                    echo $row['meeting_key'];
+                    echo ", ";
+                    echo "<Strong>Start Time: </Strong>";
+                    echo $row['start_time'];
+                    echo ", ";
+                    echo "<Strong>End Time: </Strong>";
+                    echo $row['end_time'];
+                    echo ", ";
+                    echo "<Strong>Address: </Strong>";
+                    echo $row['address'];
+                    echo ", ";
+                    echo "<Strong>Key of item being discussed: </Strong>";
+                    echo $row['item_key'];
+                    echo ", ";
+                    echo "<Strong>Meeting Description: </Strong>";
+                    echo $row['meet_desc'];
+                    echo ", <Strong>Organizer ID: </Strong>";
+                    echo $row['organizer'];
+                    // Also give them the option to unenroll from meeting
+                    echo "<form method='post'><input type='submit' class='button' name='";
+                    echo $row['meeting_key'];
+                    echo "' value='Remove yourself from meeting'></form>";
+                    echo "<br><br>";
+                }
+            }
+        }
+    }
 
 
-$mysqli->close();
+    $mysqli->close();
 ?>
 </body>
 </html>
