@@ -62,7 +62,7 @@ require_once "../config.php";
 <br>
 <form method ="post" name="trial">
     
-    Item Key: <input type="number" name="Title" id="testId">
+    Item Key of item you want to delete: <input type="number" name="Title" id="testId">
     <br><br>
 
     <input type="submit" value="Submit">
