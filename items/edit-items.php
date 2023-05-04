@@ -26,10 +26,13 @@ require_once "../config.php";
 <html>
 <body>
 <?php
-
+    // Queries for updating the attributes of a given item in the database
+    // and for selecting all the attributes of a given item 
     $sqlUpdateItem = "UPDATE items SET item_title = ? , author = ? , isbn = ? , date_added = ? , summary = ? WHERE item_key = ?";
     $sql = "SELECT * FROM items WHERE item_key = ?;";
 
+    // variables used to store the given values from the
+    // user and values queried to add to the database  
     $itemkey = $title = $author = $isbn = $summary = "";
     $itemkey_err = $title_err = $author_err = $isbn_err = $summary_err = "";
     // Update time for new edit 
@@ -42,9 +45,11 @@ require_once "../config.php";
       } else {
         $itemkey = trim($_POST["Item"]);
       }
-      if(empty($itemkey_err)){         
+      if(empty($itemkey_err)){      
+        // Get all atributes with item_key from user
         if($stmt = $mysqli->prepare($sql)){
           $stmt->bind_param("i", $itemkey);
+          // Attempt to execute the prepared statement
           if($stmt->execute()){
             $result = $stmt->get_result();
             // Get the items current information and store it 
@@ -55,7 +60,7 @@ require_once "../config.php";
               $isbn = $row['isbn'];
               $summary = $row['summary'];
             }
-            // Get the users input for the information to upate
+            // Get the users input for the information to update
             if(empty(trim($_POST["Title"]))){
               
             } else{
@@ -79,7 +84,7 @@ require_once "../config.php";
             } else{
                 $summary = trim($_POST["Summary"]);
             }
-            //update the database with the only the update information and date
+            //update the database with only the updated information and date
             if(empty($title_err) && empty($author_err) && empty($isbn_err) && empty($summary_err)){
               if($stmt = $mysqli->prepare($sqlUpdateItem)){
                 $stmt->bind_param("ssissi", $title, $author, $isbn, $date_added, $summary, $itemkey);            
@@ -98,7 +103,7 @@ require_once "../config.php";
 <h3>Edit Item:</h3>
 <br>
 <text>
-  Give the item key for the item you want to change then update any information you wish<br>
+  Please give the item key for the item you want to change then update any information you wish<br>
   Leave the input blank if you do not wish to edit that item.
 </text>
 <br>

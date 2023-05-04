@@ -30,7 +30,8 @@ if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] == true){
         / <a href="/meetings/previous-meetings.php">Meetings</a>
         / <a href="/meetings/edit-meetings.php">Edit Meetings</a>
         / <a href="/items/get-items.php">Items</a>
-        <?php if($_SESSION["permission"] >= 2) : ?>
+        <!-- Only display these links if the user is admin persmission level or greater-->
+        <?php if($_SESSION["permission"] >= 2) : ?> 
             / <a href="/items/create-items.php">Add new item</a>
             / <a href="/items/edit-items.php">Update item</a>
             / <a href="/items/delete-items.php">Delete item</a>

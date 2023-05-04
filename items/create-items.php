@@ -27,12 +27,14 @@ require_once "../config.php";
 <html>
 <body>
 <?php
-
+    // Query to insert items with the given values into the table items in the database 
     $sqlItems = "INSERT INTO items (item_title, author, isbn, date_added, summary) VALUES (?,?,?,?,?);";
-    $sqlGetNewItemKey = "SELECT item_title FROM items WHERE item_title = ? AND author = ? AND isbn = ? AND summary = ?";
 
+    // variables used to store the given values
+    // from the user to add to the database 
     $title = $author = $isbn = $summary = $itemkey = "";
     $title_err = $author_err = $isbn_err = $summary_err = "";
+    // Update time for new edit
     $date_added = date("Y-m-d h:i:sa", time());
 
     if($_SERVER["REQUEST_METHOD"] == "POST"){
@@ -68,21 +70,7 @@ require_once "../config.php";
                 $stmt->bind_param("ssiss", $title, $author, $isbn, $date_added, $summary);
                         
                 // Attempt to execute the prepared statement
-                if($stmt->execute()){
-
-                    // Now get item key that was just created
-                    if($stmt = $mysqli->prepare($sqlGetNewItemKey)){
-                        $stmt->bind_param("ssis", $title, $author, $isbn, $summary);
-                                
-                        // Attempt to execute the prepared statement
-                        if($stmt->execute()){
-                            $result = $stmt->get_result();
-                            $row = $result->fetch_assoc();
-                            $itemkey = $row['item_key'];
-
-                        }
-                    }
-                }
+                $stmt->execute()
             }
         }
         header('Location: /accounts/welcome.php');
