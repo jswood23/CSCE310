@@ -43,7 +43,7 @@ if($stmt = $mysqli->prepare($sqlGetSelectedReview)){
 <body>
 <?php
 
-    $sqlUpdateReview = "UPDATE reviews SET item_key = ?, header = ?, body = ?, stars = ? WHERE reviews.review_key = ?;";
+    $sqlUpdateReview = "UPDATE reviews SET item_key = ?, header = ?, body = ?, stars = ?  WHERE review_key = ?;";
 
     $curAccount = $_SESSION["account_key"];
     $curUserEmail = $_SESSION["email"];
@@ -83,10 +83,11 @@ if($stmt = $mysqli->prepare($sqlGetSelectedReview)){
         }
 
         if(empty($item_key_err) && empty($header_err) && empty($body_err) && empty($stars_err)){
-            if($stmt = $mysqli->prepare($sqlUpdateReview)){
 
-                // Create meeting
-                $stmt->bind_param("sssss", $curAccount, $item_key, $header, $body, $stars);
+            if($stmt = $mysqli->prepare($sqlUpdateReview)){
+                
+                // Create review
+                $stmt->bind_param("sssss", $item_key, $header, $body, $stars, $_SESSION["selected_review"]);
                 $stmt->execute();
             }
             header('Location: /reviews/view-reviews.php');
