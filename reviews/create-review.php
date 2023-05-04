@@ -10,11 +10,6 @@ if(!$loggedin){
     exit;
 }
 
-if($_SESSION["permission"] < 2){
-    header('Location: /accounts/welcome.php');
-    exit;
-}
-
 // Include config file
 require_once "../config.php";
 
@@ -57,13 +52,13 @@ require_once "../config.php";
             $body = trim($_POST["body"]);
         }
 
-        $stars_validate = trim($_POST["stars"]);
-        if(empty(trim($_POST["stars"]))){
+        $stars = trim($_POST["stars"]);
+        if(!isset($stars) || $stars === ''){
             $stars_err = "Please enter a number of stars.";
-        } else if (filter_var($stars, FILTER_VALIDATE_INT, array('options' => array('min_range' => 0, 'max_range' => 5))) == false){
-            $stars_err = "Please enter a number of stars that is an integer between of 0 and 5 inclusive.";
-        } else {
-            $stars = intval($stars_validate);
+        } else if (!is_numeric($stars)){
+            $stars_err = "Please enter a number of stars that is an integer.";
+        } else if (intval($stars) <= 5 && intval($stars) >= 0){
+            $stars = intval($stars);
         }
 
         if(empty($item_key_err) && empty($header_err) && empty($body_err) && empty($stars_err)){
@@ -71,7 +66,7 @@ require_once "../config.php";
 
                 // Create meeting
                 $stmt->bind_param("sssss", $curAccount, $item_key, $header, $body, $stars);
-                $stmt->execute()
+                $stmt->execute();
             }
             header('Location: /accounts/welcome.php');
         }
@@ -112,12 +107,16 @@ require_once "../config.php";
 
         ?>
     </select>
+    <?php echo (!empty($item_key_err)) ? "ERROR: " . $item_key_err : ''; ?>
     <br><br>
     Header: <input type="text" name="header" id="testId">
+    <?php echo (!empty($header_err)) ? "ERROR: " . $header_err : ''; ?>
     <br><br>
     Body: <input type="text" name="body" id="testId">
+    <?php echo (!empty($body_err)) ? "ERROR: " . $body_err : ''; ?>
     <br><br>
     Stars (0-5): <input type="text" name="stars" id="testId">
+    <?php echo (!empty($stars_err)) ? "ERROR: " . $stars_err : ''; ?>
     <br><br>
     <input type="submit" value="Submit">
 
