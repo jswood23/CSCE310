@@ -15,9 +15,9 @@ if(!$loggedin){
 <body>
     <h1 class="my-5">Hi, <b><?php echo htmlspecialchars($_SESSION["name_first"]); ?></b>. Let's review some books.</h1>
     <p>
-        <a href="create-review.php" class="btn btn-primary ml-3">Create review</a>
-        <a href="view-reviews.php" class="btn btn-primary ml-3">View reviews</a>
-        <a href="edit-reviews.php" class="btn btn-primary ml-3">Edit reviews</a>
+        <a href="create-review.php" class="btn btn-primary ml-3">Create Review</a>
+        <a href="view-reviews.php" class="btn btn-primary ml-3">View Reviews</a>
+        <a href="select-review.php" class="btn btn-primary ml-3">Edit/Delete Reviews</a>
     </p>
 </body>
 </html>

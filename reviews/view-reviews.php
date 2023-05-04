@@ -32,8 +32,8 @@ if($stmt = $mysqli->prepare($sql)){
             echo "<br><h3>No reviews made!</h3>";
         }
         else{
-          // Displaying all items in database
-            echo "<h3>Items:</h3>";
+          // Displaying all reviews in database
+            echo "<h3>Reviews:</h3>";
             foreach ($result as $row) {
                 echo "<b>Review Key: </b>";
                 echo $row['review_key'];

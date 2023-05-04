@@ -57,7 +57,9 @@ require_once "../config.php";
             $stars_err = "Please enter a number of stars.";
         } else if (!is_numeric($stars)){
             $stars_err = "Please enter a number of stars that is an integer.";
-        } else if (intval($stars) <= 5 && intval($stars) >= 0){
+        } else if (intval($stars) > 5 || intval($stars) < 0){
+            $stars_err = "Please enter a number of stars that is between 0 and 5, inclusive.";
+        } else {
             $stars = intval($stars);
         }
 

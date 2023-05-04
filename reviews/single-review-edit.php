@@ -71,23 +71,25 @@ if($stmt = $mysqli->prepare($sqlGetSelectedReview)){
             $body = trim($_POST["body"]);
         }
 
-        $stars_validate = trim($_POST["stars"]);
-        if(empty(trim($_POST["stars"]))){
+        $stars = trim($_POST["stars"]);
+        if(!isset($stars) || $stars === ''){
             $stars_err = "Please enter a number of stars.";
-        } else if (filter_var($stars, FILTER_VALIDATE_INT, array('options' => array('min_range' => 0, 'max_range' => 5))) == false){
-            $stars_err = "Please enter a number of stars that is an integer between of 0 and 5 inclusive.";
+        } else if (!is_numeric($stars)){
+            $stars_err = "Please enter a number of stars that is an integer.";
+        } else if (intval($stars) > 5 || intval($stars) < 0){
+            $stars_err = "Please enter a number of stars that is between 0 and 5, inclusive.";
         } else {
-            $stars = intval($stars_validate);
+            $stars = intval($stars);
         }
 
         if(empty($item_key_err) && empty($header_err) && empty($body_err) && empty($stars_err)){
-            if($stmt = $mysqli->prepare($sqlReviews)){
+            if($stmt = $mysqli->prepare($sqlUpdateReview)){
 
                 // Create meeting
                 $stmt->bind_param("sssss", $curAccount, $item_key, $header, $body, $stars);
-                $stmt->execute()
+                $stmt->execute();
             }
-            header('Location: /accounts/welcome.php');
+            header('Location: /reviews/view-reviews.php');
         }
     }
 
@@ -98,7 +100,7 @@ if($stmt = $mysqli->prepare($sqlGetSelectedReview)){
 <form method ="post" name="trial">
 
     Select Item to Review: <br>
-    <select name="ary2">
+    <select name="item_key">
         <?php
 
             $sqlGetPossibleItems = "SELECT * FROM items";
@@ -133,12 +135,16 @@ if($stmt = $mysqli->prepare($sqlGetSelectedReview)){
 
         ?>
     </select>
+    <?php echo (!empty($item_key_err)) ? "ERROR: " . $item_key_err : ''; ?>
     <br><br>
-    Header: <input type="text" name="header" id="testId" value="<?php echo $header;?>">
+    Header: <input type="text" name="header" id="header" value="<?php echo $header;?>">
+    <?php echo (!empty($header_err)) ? "ERROR: " . $header_err : ''; ?>
     <br><br>
-    Body: <input type="text" name="body" id="testId" value="<?php echo $body;?>">
+    Body: <input type="text" name="body" id="body" value="<?php echo $body;?>">
+    <?php echo (!empty($body_err)) ? "ERROR: " . $body_err : ''; ?>
     <br><br>
-    Stars: <input type="text" name="stars" id="testId" value="<?php echo $stars;?>">
+    Stars: <input type="text" name="stars" id="stars" value="<?php echo $stars;?>">
+    <?php echo (!empty($stars_err)) ? "ERROR: " . $stars_err : ''; ?>
     <br><br>
     <input type="submit" value="Submit">
 
