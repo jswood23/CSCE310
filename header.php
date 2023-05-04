@@ -37,10 +37,10 @@ if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] == true){
             / <a href="/meetings/create-meeting.php">Create Meeting</a>
             / <a href="/accounts/manage-accounts.php">Manage Accounts</a>
         <?php endif; ?>
+        / <a href="/accounts/logout.php">Logout</a>
     <?php else : ?>
         <a href="/accounts/register.php">Register</a>
         / <a href="/accounts/login.php">Login</a>
     <?php endif; ?>
-    / <a href="/accounts/logout.php">Logout</a>
     </br>
 </body>
