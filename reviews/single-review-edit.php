@@ -10,6 +10,11 @@ if(!$loggedin){
     exit;
 }
 
+if($_SESSION["permission"] == 0){
+    header('Location: /accounts/welcome.php');
+    exit;
+}
+
 
 // Include config file
 require_once "../config.php";
@@ -85,7 +90,7 @@ if($stmt = $mysqli->prepare($sqlGetSelectedReview)){
         if(empty($item_key_err) && empty($header_err) && empty($body_err) && empty($stars_err)){
 
             if($stmt = $mysqli->prepare($sqlUpdateReview)){
-                
+
                 // Create review
                 $stmt->bind_param("sssss", $item_key, $header, $body, $stars, $_SESSION["selected_review"]);
                 $stmt->execute();

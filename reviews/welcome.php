@@ -10,6 +10,12 @@ if(!$loggedin){
     header("location: login.php");
     exit;
 }
+
+if($_SESSION["permission"] == 0){
+    header('Location: /accounts/welcome.php');
+    exit;
+}
+
 ?>
 
 <body>

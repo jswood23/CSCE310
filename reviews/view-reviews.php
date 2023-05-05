@@ -3,10 +3,15 @@ include '../header.php';
 ?>
 
 <?php
- 
+
 // Check if the user is logged in, if not then redirect him to login page
 if(!$loggedin){
     header("location: ../accounts/login.php");
+    exit;
+}
+
+if($_SESSION["permission"] == 0){
+    header('Location: /accounts/welcome.php');
     exit;
 }
 
@@ -21,10 +26,10 @@ require_once "../config.php";
 <body>
 <?php
 
-// Get all items in datbase 
+// Get all items in datbase
 $sql = "SELECT reviews.*, CONCAT(accounts.name_first, ' ', accounts.name_last) AS name, items.item_title AS title FROM reviews JOIN accounts ON reviews.account_key = accounts.account_key JOIN items ON reviews.item_key = items.item_key;";
 
-if($stmt = $mysqli->prepare($sql)){           
+if($stmt = $mysqli->prepare($sql)){
     // Attempt to execute the prepared statement
     if($stmt->execute()){
         $result = $stmt->get_result();
@@ -50,7 +55,7 @@ if($stmt = $mysqli->prepare($sql)){
                 echo "<b>Body: </b>";
                 echo $row['body'];
                 echo ",  ";
-                echo "<b>Stars: </b> "; 
+                echo "<b>Stars: </b> ";
                 echo $row["stars"];
                 echo ",  ";
                 echo "<b>Created On:  </b>";

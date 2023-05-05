@@ -10,6 +10,11 @@ if(!$loggedin){
     exit;
 }
 
+if($_SESSION["permission"] == 0){
+    header('Location: /accounts/welcome.php');
+    exit;
+}
+
 
 // Include config file
 require_once "../config.php";
@@ -90,7 +95,7 @@ $permission = $_SESSION["permission"]
                     echo "<b>Body: </b>";
                     echo $row['body'];
                     echo ",  ";
-                    echo "<b>Stars: </b> "; 
+                    echo "<b>Stars: </b> ";
                     echo $row["stars"];
                     echo ",  ";
                     echo "<b>Created On:  </b>";
