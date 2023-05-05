@@ -21,7 +21,7 @@ require_once "../config.php";
 <body>
 <?php
 
-// Get all items in datbase 
+// Query to get all items and their attributes from the datbase 
 $sql = "SELECT * FROM items;";
 
 if($stmt = $mysqli->prepare($sql)){           
@@ -32,7 +32,7 @@ if($stmt = $mysqli->prepare($sql)){
             echo "<br><h3>No items added!</h3>";
         }
         else{
-          // Displaying all items in database
+            // Displaying all items in database
             echo "<h3>Items:</h3>";
             foreach ($result as $row) {
                 echo "Item Key: ";

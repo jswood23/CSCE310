@@ -26,40 +26,28 @@ require_once "../config.php";
 <html>
 <body>
 <?php
-
+    // Delete query to delete item with given item key
     $sqlDeleteItem = "DELETE FROM items WHERE item_key = ?";
-
-    $curAccount = $_SESSION["account_key"];
-    $curUserEmail = $_SESSION["email"];
 
     $itemk = "";
     $itemk_err = "";
 
     if($_SERVER["REQUEST_METHOD"] == "POST"){
-        
         if(empty(trim($_POST["Title"]))){
             $itemk_err = "Please enter the item key you wish to delete.";
         } else{
             $itemk = trim($_POST["Title"]);
         }
-
         if(empty($itemk_err)){
-            // Now get meeting key that was just created
+            // Now delete the item with the given key
             if($stmt = $mysqli->prepare($sqlDeleteItem)){
                 $stmt->bind_param("i", $itemk);
-                                
                 // Attempt to execute the prepared statement
                 $stmt->execute();
-
-                
             }
-
         }
-
       header('Location: /accounts/welcome.php');
     }
-
-    //$mysqli->close();
 ?>
 <br>
 <h3>Delete Item:</h3>
