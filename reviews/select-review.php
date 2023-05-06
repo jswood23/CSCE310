@@ -10,6 +10,7 @@ if(!$loggedin){
     exit;
 }
 
+// Check if user has correct permissions
 if($_SESSION["permission"] == 0){
     header('Location: /accounts/welcome.php');
     exit;
@@ -30,10 +31,11 @@ $permission = $_SESSION["permission"]
 <body>
 
 <?php
+    // Base command before parameters are binded
     $sqlReviewDelete = "DELETE FROM reviews WHERE reviews.review_key = ?";
 
     if($_SERVER["REQUEST_METHOD"] == "POST"){
-        // Get meeting id of the button pressed
+        // Get review id of the button pressed
         $postKeys = array_keys($_POST);
         $reviewId = $postKeys[0];
         if(strpos($reviewId, "D")){
@@ -42,13 +44,13 @@ $permission = $_SESSION["permission"]
             if($stmt = $mysqli->prepare($sqlReviewDelete)){
                 $stmt->bind_param("s", $reviewId);
                 if($stmt->execute()){
-                    // Now refresh page so deleted meeting is reflected
+                    // Now refresh page so deleted review is reflected
                     header("Refresh:0");
                 }
             }
         }
         else{
-            // They want to edit the meeting, store ID in session, and go to single meeting update page
+            // They want to edit the review, store ID in session, and go to single review update page
             $_SESSION["selected_review"] = $reviewId;
             header('Location: /reviews/single-review-edit.php');
         }
@@ -58,6 +60,8 @@ $permission = $_SESSION["permission"]
 
 <?php
 
+    // Base command before parameters are binded
+    // Only get reviews the current user is allowed to edit or delete.
     if ($permission == 2) {
         $sql = "SELECT reviews.*, CONCAT(accounts.name_first, ' ', accounts.name_last) AS name, items.item_title AS title FROM reviews JOIN accounts ON reviews.account_key = accounts.account_key JOIN items ON reviews.item_key = items.item_key;";
     } else {

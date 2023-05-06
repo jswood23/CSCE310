@@ -10,6 +10,7 @@ if(!$loggedin){
     exit;
 }
 
+// Check if user has correct permissions
 if($_SESSION["permission"] == 0){
     header('Location: /accounts/welcome.php');
     exit;
@@ -19,6 +20,7 @@ if($_SESSION["permission"] == 0){
 // Include config file
 require_once "../config.php";
 
+// Base command before parameters are binded
 $sqlGetSelectedReview = "SELECT * FROM reviews WHERE review_key = ?";
 $account_key = $item_key = $header = $body = $stars = $created_at = "";
 
@@ -30,7 +32,7 @@ if($stmt = $mysqli->prepare($sqlGetSelectedReview)){
 
     // Attempt to execute the prepared statement
     if($stmt->execute()){
-        // Save original meeting details
+        // Save original review details
         $result = $stmt->get_result();
         $row = $result->fetch_assoc();
         $review_key = $row['review_key'];
@@ -48,11 +50,14 @@ if($stmt = $mysqli->prepare($sqlGetSelectedReview)){
 <body>
 <?php
 
+    // Base command before parametes are binded.
     $sqlUpdateReview = "UPDATE reviews SET item_key = ?, header = ?, body = ?, stars = ?  WHERE review_key = ?;";
 
+     // Get session variables
     $curAccount = $_SESSION["account_key"];
     $curUserEmail = $_SESSION["email"];
 
+    // Initialize error variables
     $item_key_err = $header_err = $body_err = $stars_err = $created_at_err = "";
 
     if($_SERVER["REQUEST_METHOD"] == "POST"){
@@ -64,18 +69,21 @@ if($stmt = $mysqli->prepare($sqlGetSelectedReview)){
             $item_key = trim($_POST["item_key"]);
         }
 
+       // Make sure that every field is populated
         if(empty(trim($_POST["header"]))){
             $header_err = "Please enter header text.";
         } else{
             $header = trim($_POST["header"]);
         }
 
+        // Make sure that every field is populated
         if(empty(trim($_POST["body"]))){
             $body_err = "Please enter body text.";
         } else{
             $body = trim($_POST["body"]);
         }
 
+        // Make sure that every field is populated and is an int and between 0 and 5.
         $stars = trim($_POST["stars"]);
         if(!isset($stars) || $stars === ''){
             $stars_err = "Please enter a number of stars.";
@@ -87,6 +95,7 @@ if($stmt = $mysqli->prepare($sqlGetSelectedReview)){
             $stars = intval($stars);
         }
 
+        // If no error, bind parameters to SQL insert statement and execute
         if(empty($item_key_err) && empty($header_err) && empty($body_err) && empty($stars_err)){
 
             if($stmt = $mysqli->prepare($sqlUpdateReview)){
@@ -109,6 +118,7 @@ if($stmt = $mysqli->prepare($sqlGetSelectedReview)){
     <select name="item_key">
         <?php
 
+            // We need to select all items to display to the user.
             $sqlGetPossibleItems = "SELECT * FROM items";
 
             if($stmt = $mysqli->prepare($sqlGetPossibleItems)){

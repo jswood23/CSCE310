@@ -10,6 +10,7 @@ if(!$loggedin){
     exit;
 }
 
+// Check if user has correct permissions
 if($_SESSION["permission"] == 0){
     header('Location: /accounts/welcome.php');
     exit;
@@ -27,12 +28,14 @@ require_once "../config.php";
 <body>
 <?php
 
+    // Base command before parameters are binded.
     $sqlReviews = "INSERT INTO reviews (account_key, item_key, header, body, stars) VALUES (?,?,?,?,?);";
-    $sqlGetNewReviewKey = "SELECT review_key FROM reviews WHERE account_key = ? AND item_key = ? AND header = ? AND body = ? AND stars = ?";
 
+    // Get session variables
     $curAccount = $_SESSION["account_key"];
     $curUserEmail = $_SESSION["email"];
 
+    // Initialize variables
     $item_key = $header = $body = $stars = $created_at = "";
     $item_key_err = $header_err = $body_err = $stars_err = $created_at_err = "";
 
@@ -45,18 +48,21 @@ require_once "../config.php";
             $item_key = trim($_POST["item_key"]);
         }
 
+        // Make sure that every field is populated
         if(empty(trim($_POST["header"]))){
             $header_err = "Please enter header text.";
         } else{
             $header = trim($_POST["header"]);
         }
 
+        // Make sure that every field is populated
         if(empty(trim($_POST["body"]))){
             $body_err = "Please enter body text.";
         } else{
             $body = trim($_POST["body"]);
         }
 
+        // Make sure that every field is populated and value is int and value is between 0 and 5
         $stars = trim($_POST["stars"]);
         if(!isset($stars) || $stars === ''){
             $stars_err = "Please enter a number of stars.";
@@ -68,6 +74,7 @@ require_once "../config.php";
             $stars = intval($stars);
         }
 
+        // If no error, bind parameters to SQL insert statement and execute
         if(empty($item_key_err) && empty($header_err) && empty($body_err) && empty($stars_err)){
             if($stmt = $mysqli->prepare($sqlReviews)){
 
@@ -89,6 +96,7 @@ require_once "../config.php";
     <select name="item_key">
         <?php
 
+            // We need to select all items to display to the user.
             $sqlGetPossibleItems = "SELECT * FROM items";
 
             if($stmt = $mysqli->prepare($sqlGetPossibleItems)){

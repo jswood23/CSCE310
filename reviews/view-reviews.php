@@ -10,6 +10,7 @@ if(!$loggedin){
     exit;
 }
 
+// Check if user has correct permissions
 if($_SESSION["permission"] == 0){
     header('Location: /accounts/welcome.php');
     exit;
@@ -26,7 +27,8 @@ require_once "../config.php";
 <body>
 <?php
 
-// Get all items in datbase
+// Base command before parameters are binded
+// Only get reviews the current user is allowed to edit or delete.
 $sql = "SELECT reviews.*, CONCAT(accounts.name_first, ' ', accounts.name_last) AS name, items.item_title AS title FROM reviews JOIN accounts ON reviews.account_key = accounts.account_key JOIN items ON reviews.item_key = items.item_key;";
 
 if($stmt = $mysqli->prepare($sql)){

@@ -3,7 +3,6 @@ include '../header.php';
 ?>
 
 <?php
-// I made this code with the help of a tutorial: https://www.tutorialrepublic.com/php-tutorial/php-mysql-login-system.php
 
 // Check if the user is logged in, if not then redirect him to login page
 if(!$loggedin){
@@ -11,6 +10,7 @@ if(!$loggedin){
     exit;
 }
 
+// Check if user has correct permissions
 if($_SESSION["permission"] == 0){
     header('Location: /accounts/welcome.php');
     exit;
